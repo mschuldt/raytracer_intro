@@ -1,10 +1,25 @@
+#!/usr/bin/env python
+
 from __future__ import division #for python 2
 import turtle
+from sys import argv
 
-from basic_raycasting import *
-#from shadows_raycasting import *
-#from illuminated_raycasting import *
-#from basic_raytracer import *
+def usage_and_exit():
+    print("Usage: python {basic, shadows, illum, raytracer}")
+    exit(0)
+
+if len(argv) != 2:
+    usage_and_exit()
+if argv[1] == "basic":
+    from basic_raycasting import *
+elif argv[1] == "shadows":
+    from shadows_raycasting import *
+elif argv[1] == "illum":
+    from illuminated_raycasting import *
+elif argv[1] == "":
+    from basic_raytracer import *
+else:
+    usage_and_exit()
 
 
 def render_with_turtle():
@@ -20,7 +35,7 @@ def render_with_turtle():
             turtle.forward(pen_size)
     wait()
 
-    
+
 def render_image(filename="output.png"):
     import png
     data = []
@@ -35,5 +50,7 @@ def render_image(filename="output.png"):
     turtle.bgpic(filename)
     wait()
 
-#render_with_turtle()
-render_image()
+if render_using_turtle:
+    render_with_turtle()
+else:
+    render_image()

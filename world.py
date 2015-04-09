@@ -2,6 +2,7 @@ from things import *
 
 canvas_size = 500
 pen_size = 5
+render_using_turtle = False
 
 camera = [0, 0, 5]
 reflection_depth = 3
