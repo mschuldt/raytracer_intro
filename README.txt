@@ -1,4 +1,5 @@
 
+
 files:
 
  - basic_raycasting.py
@@ -25,4 +26,10 @@ files:
 - things.py
       defines sphere and vector abstractions, and a few utilities
 
+
+
+NOTE:
+  If you get the error "ImportError: No module named png" you are probably
+  on a system that does not support symbolic links. To fix this copy
+  raytracer_intro/pypng/code/png.py to raytracer_intro/png.py
 
