@@ -160,10 +160,10 @@ def render_image(filename="output.png"):
         for x in range(-canvas_half, canvas_half, pen_size):
             direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
             color = list(map(lambda c: min(1.0, c), trace_ray(camera, direction, reflection_depth)))
-            row.extend(map(lambda x: int(x*255), color))
-        data.append(row)
+            row.extend(map(lambda x: int(x*255), color*pen_size))
+        data.extend([row for _ in range(pen_size)])
         print ("{}%".format(((y + canvas_half)/canvas_size)*100))
-    img = png.from_array(data, 'RGB')
+    img = png.from_array(list(reversed(data)), 'RGB')
     img.save(filename)
     turtle.bgpic(filename)
     wait()
@@ -177,6 +177,3 @@ def show_return(a):
     return a
 
 render_image();
-
-#wait
-x = input()

@@ -1,6 +1,7 @@
 from __future__ import division #for python 2
 import turtle
 import png
+from math import sqrt
 
 canvas_size = 200
 canvas_half = int(canvas_size/2)
@@ -19,6 +20,10 @@ def vector_sub(a, b):
 
 def a_minus_bk(a, b, k):
     return [a[0] - b[0]*k, a[1] - b[1]*k, a[2] - b[2]*k]
+
+def vector_normalize(v):
+    magnitude = sqrt(dot_product(v, v))
+    return list(map(lambda x: x / magnitude, v))
 
 def get_closest_sphere(source, direction, t_min, t_max):
     closest = None;
@@ -68,11 +73,12 @@ def render_image(filename="output.png"):
     for y in range(-canvas_half, canvas_half, pen_size):
         row = []
         for x in range(-canvas_half, canvas_half, pen_size):
-            color = trace_ray([x/canvas_size, y/canvas_size, 1])
-            row.extend(map(lambda x: int(x*255), color))
-        data.append(row)
+            direction = vector_normalize([x/canvas_size, y/canvas_size, 1])
+            color = list(map(lambda c: min(1.0, c), trace_ray(direction)))
+            row.extend(map(lambda x: int(x*255), color*pen_size))
+        data.extend([row for _ in range(pen_size)])
         print ("{}%".format(((y + canvas_half)/canvas_size)*100))
-    img = png.from_array(data, 'RGB')
+    img = png.from_array(list(reversed(data)), 'RGB')
     img.save(filename)
     turtle.bgpic(filename)
     wait()
