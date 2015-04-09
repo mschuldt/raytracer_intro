@@ -1,3 +1,5 @@
+from __future__ import division #for python 2
+import png
 import turtle
 from math import sqrt
 
@@ -135,26 +137,46 @@ def trace_ray(source, direction, depth):
     return [0, 0, 0]
 
 
-turtle.pensize(pen_size)
-turtle.speed(0)
-turtle.shape("turtle")
+def render_with_turtle():
+    turtle.pensize(pen_size)
+    turtle.speed(0)
+    turtle.shape("turtle")
 
-for y in range(-canvas_half, canvas_half, pen_size):
-    turtle.penup()
-    turtle.setpos(-canvas_half, y)
-    turtle.pendown()
-    for x in range(-canvas_half, canvas_half, pen_size):
-        direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
-        color = list(map(lambda c: min(1.0, c), trace_ray(camera, direction, reflection_depth)))
-        turtle.pencolor(color)
-        turtle.forward(pen_size)
+    for y in range(-canvas_half, canvas_half, pen_size):
+        turtle.penup()
+        turtle.setpos(-canvas_half, y)
+        turtle.pendown()
+        for x in range(-canvas_half, canvas_half, pen_size):
+            direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
+            color = list(map(lambda c: min(1.0, c), trace_ray(camera, direction, reflection_depth)))
+            turtle.pencolor(color)
+            turtle.forward(pen_size)
+    wait()
 
+def render_image(filename="output.png"):
+    data = []
+    for y in range(-canvas_half, canvas_half, pen_size):
+        row = []
+        for x in range(-canvas_half, canvas_half, pen_size):
+            direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
+            color = list(map(lambda c: min(1.0, c), trace_ray(camera, direction, reflection_depth)))
+            row.extend(map(lambda x: int(x*255), color))
+        data.append(row)
+        print ("{}%".format(((y + canvas_half)/canvas_size)*100))
+    img = png.from_array(data, 'RGB')
+    img.save(filename)
+    turtle.bgpic(filename)
+    wait()
+
+def wait(): raw_input()
 
 ### debugging
 
 def show_return(a):
     print(a)
     return a
+
+render_image();
 
 #wait
 x = input()
