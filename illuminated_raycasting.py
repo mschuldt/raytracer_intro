@@ -1,73 +1,19 @@
-import turtle
+from __future__ import division #for python 2
 from math import sqrt
-
-canvas_size = 200
-canvas_half = int(canvas_size/2)
-pen_size = 5
-camera = [0, 0, 5]
-
-spheres = [[1, [0, 1,  0], [1, 0, 0], 16, 2],
-           [1, [1, -1, 0], [0, 1, 0], 16, 2],
-           [1, [-1, -1, 0], [0, 0, 1], 16, 2]]
-
-lights = [(0.8, [0.5, 0.5, 5])]
-
-ambient_light = 0.1
-
-
-def light_intensity(l):
-    return l[0]
-
-def light_coord(l):
-    return l[1]
-
-
-def sphere_radius(s):
-    return s[0]
-
-def sphere_center(s):
-    return s[1]
-
-def sphere_color(s):
-    return s[2]
-
-def sphere_exponent(s):
-    return s[3]
-
-def sphere_reflectiveness(s):
-    return s[4]
+from world import *
+from things import *
 
 def calc_reflected(v, n):
     """ -v + 2 * dot(n, v) * n """
     dot_times_two = 2 * dot_product(v, n)
     return vector_sub(v, vector_scale(n, dot_times_two))
 
-def dot_product(a, b):
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
-
-def vector_add(a, b):
-    return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]
-
-def vector_sub(a, b):
-    return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
-
-def vector_scale(v, s):
-    return list(map(lambda x: x * s, v))
-
-def vector_normalize(v):
-    magnitude = sqrt(dot_product(v, v))
-    return list(map(lambda x: x / magnitude, v))
-
-#### ACTUAL LOGIC ####
-
 def calc_specular(l, v, normal, p):
     reflected = calc_reflected(l, normal)
     return pow(max(0.0, dot_product(reflected, v)), p)
 
-
 def calc_diffuse(l, normal):
     return max(0.0, dot_product(l, normal))
-
 
 def get_illumination(sphere, distance, v):
     surface = vector_add(vector_scale(v, distance), camera)
@@ -81,7 +27,6 @@ def get_illumination(sphere, distance, v):
         coefficient += light_intensity(light) * curr_coeff
 
     return coefficient
-
 
 def get_closest_intersection(source, direction, t_min, t_max):
     closest = None
@@ -105,7 +50,6 @@ def get_closest_intersection(source, direction, t_min, t_max):
                 closest = sphere
     return (closest, distance)
 
-
 def trace_ray(direction):
     intersection = get_closest_intersection(camera, direction, 0, 100000)
     sphere = intersection[0]
@@ -115,27 +59,6 @@ def trace_ray(direction):
         return tuple(map(lambda channel: min(1.0, channel * illum), color))
     return (0, 0, 0)
 
-
-turtle.pensize(pen_size)
-turtle.speed(0)
-turtle.shape("turtle")
-
-for y in range(-canvas_half, canvas_half, pen_size):
-    turtle.penup()
-    turtle.setpos(-canvas_half, y)
-    turtle.pendown()
-    for x in range(-canvas_half, canvas_half, pen_size):
-        v = vector_normalize([x/canvas_size, y/canvas_size, -1])
-        color = trace_ray(v)
-        turtle.pencolor(color)
-        turtle.forward(pen_size)
-
-
-### debugging
-
-def show_return(a):
-    print(a)
-    return a
-
-#wait
-x = input()
+def pixel_color(x, y):
+    direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
+    return trace_ray(direction)
