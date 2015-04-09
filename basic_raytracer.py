@@ -2,75 +2,20 @@ from __future__ import division #for python 2
 import png
 import turtle
 from math import sqrt
-
-canvas_size = 400
-canvas_half = int(canvas_size/2)
-pen_size = 5
-camera = [0, 0, 5]
-reflection_depth = 3
-
-spheres = [[1, [0, 1,  0], [1, 0, 0], 16, 0.5],
-           [1, [1, -1, 0], [0, 1, 0], 16, 0.5],
-           [1, [-1, -1, 0], [0, 0, 1], 16, 0.5]]
-
-lights = [(0.8, [0.5, 0.5, 5])]
-
-ambient_light = 0.1
-
-
-def light_intensity(l):
-    return l[0]
-
-def light_coord(l):
-    return l[1]
-
-
-def sphere_radius(s):
-    return s[0]
-
-def sphere_center(s):
-    return s[1]
-
-def sphere_color(s):
-    return s[2]
-
-def sphere_exponent(s):
-    return s[3]
-
-def sphere_reflectiveness(s):
-    return s[4]
+from world import *
+from things import *
 
 def calc_reflected(v, n):
     """ v - 2 * dot(n, v) * n """
     dot_times_two = 2 * dot_product(v, n)
     return vector_sub(v, vector_scale(n, dot_times_two))
 
-def dot_product(a, b):
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
-
-def vector_add(a, b):
-    return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]
-
-def vector_sub(a, b):
-    return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
-
-def vector_scale(v, s):
-    return list(map(lambda x: x * s, v))
-
-def vector_normalize(v):
-    magnitude = sqrt(dot_product(v, v))
-    return list(map(lambda x: x / magnitude, v))
-
-#### ACTUAL LOGIC ####
-
 def calc_specular(l, v, normal, p):
     reflected = calc_reflected(l, normal)
     return pow(max(0.0, dot_product(reflected, v)), p)
 
-
 def calc_diffuse(l, normal):
     return max(0.0, dot_product(l, normal))
-
 
 def get_illumination(sphere, surface, v, normal):
     p = sphere_exponent(sphere)
@@ -136,6 +81,7 @@ def trace_ray(source, direction, depth):
         return vector_add(curr_color, reflection)
     return [0, 0, 0]
 
+################################################################################
 
 def render_with_turtle():
     turtle.pensize(pen_size)
@@ -167,13 +113,5 @@ def render_image(filename="output.png"):
     img.save(filename)
     turtle.bgpic(filename)
     wait()
-
-def wait(): raw_input()
-
-### debugging
-
-def show_return(a):
-    print(a)
-    return a
 
 render_image();

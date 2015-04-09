@@ -2,28 +2,8 @@ from __future__ import division #for python 2
 import turtle
 import png
 from math import sqrt
-
-canvas_size = 200
-canvas_half = int(canvas_size/2)
-pen_size = 1
-camera = [0, 0, -5]
-
-spheres = [[1, [0, 1,  0]],
-           [1.2, [1, -1, 0]],
-           [1, [-1, -1, 0]]]
-
-def dot_product(a, b):
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
-
-def vector_sub(a, b):
-    return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
-
-def a_minus_bk(a, b, k):
-    return [a[0] - b[0]*k, a[1] - b[1]*k, a[2] - b[2]*k]
-
-def vector_normalize(v):
-    magnitude = sqrt(dot_product(v, v))
-    return list(map(lambda x: x / magnitude, v))
+from world import *
+from things import *
 
 def get_closest_sphere(source, direction, t_min, t_max):
     closest = None;
@@ -55,6 +35,8 @@ def trace_ray(direction):
     m = max(n)
     return tuple(map(lambda x: x/m, n))
 
+################################################################################
+
 def render_with_turtle():
     turtle.pensize(pen_size)
     turtle.speed(0)
@@ -63,7 +45,7 @@ def render_with_turtle():
         turtle.setpos(-canvas_half, y)
         turtle.pendown()
         for x in range(-canvas_half, canvas_half, pen_size):
-            color = trace_ray([x/canvas_size, y/canvas_size, 1])
+            color = trace_ray([x/canvas_size, y/canvas_size, -1])
             turtle.pencolor(color)
             turtle.forward(pen_size)
     wait()
@@ -73,7 +55,7 @@ def render_image(filename="output.png"):
     for y in range(-canvas_half, canvas_half, pen_size):
         row = []
         for x in range(-canvas_half, canvas_half, pen_size):
-            direction = vector_normalize([x/canvas_size, y/canvas_size, 1])
+            direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
             color = list(map(lambda c: min(1.0, c), trace_ray(direction)))
             row.extend(map(lambda x: int(x*255), color*pen_size))
         data.extend([row for _ in range(pen_size)])
@@ -82,8 +64,6 @@ def render_image(filename="output.png"):
     img.save(filename)
     turtle.bgpic(filename)
     wait()
-
-def wait(): raw_input()
 
 #render_with_turtle()
 render_image()
