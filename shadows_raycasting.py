@@ -29,8 +29,8 @@ def get_illumination(sphere, distance, v, normal):
         light_vector = vector_normalize(vector_sub(light_coord(light), surface))
 
         ## SHADOWS
-        closest = get_closest_intersection(surface, light_vector, 0.001, 100000)
-        if closest[0]:
+        closest, _ = get_closest_intersection(surface, light_vector, 0.001, 100000)
+        if closest:
             continue
 
         curr_coeff = calc_diffuse(light_vector, normal) + calc_specular(light_vector, v, normal, p)

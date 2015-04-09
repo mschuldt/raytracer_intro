@@ -32,11 +32,7 @@ def trace_ray(source, direction):
     sphere, distance = get_closest_sphere(camera, direction, 0.001, 100000)
     if not sphere:
         return [0, 0, 0]
-    x = a_minus_bk(source, direction, -distance)
-    n = list(map(abs, vector_sub(x, sphere_center(sphere))))
-    m = max(n)
-    return list(map(lambda x: x/m, n))
-
+    return [1, 1, 1]
 
 def pixel_color(x, y):
     direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
