@@ -46,7 +46,6 @@ def render_image(filename="output.png"):
         print ("{}%".format(((y + canvas_half)/canvas_size)*100))
     img = png.from_array(list(reversed(data)), 'RGB')
     img.save(filename)
-    turtle.bgpic(filename)
     wait()
 
 def pixel_color(x, y):
