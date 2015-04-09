@@ -5,17 +5,21 @@ from math import sqrt
 from world import *
 from things import *
 
+
 def calc_reflected(v, n):
     """ v - 2 * dot(n, v) * n """
     dot_times_two = 2 * dot_product(v, n)
     return vector_sub(v, vector_scale(n, dot_times_two))
 
+
 def calc_specular(l, v, normal, p):
     reflected = calc_reflected(l, normal)
     return pow(max(0.0, dot_product(reflected, v)), p)
 
+
 def calc_diffuse(l, normal):
     return max(0.0, dot_product(l, normal))
+
 
 def get_illumination(sphere, surface, v, normal):
     p = sphere_exponent(sphere)
@@ -42,16 +46,15 @@ def get_closest_intersection(source, direction, t_min, t_max):
         radius = sphere_radius(sphere)
         pos = sphere_center(sphere)
         v = vector_sub(source, pos)
-        a = 2 * dot_product(direction, direction)
         b = - dot_product(v, direction)
         discr = b*b - (dot_product(v, v) - radius * radius)
         if discr > 0:
             discr = sqrt(discr)
-            sol1 = (b + discr)
+            sol1 = b + discr
             if sol1 < distance and t_min < sol1 and t_max > sol1:
                 distance = sol1
                 closest = sphere
-            sol2 = (b - discr)
+            sol2 = b - discr
             if sol2 < distance and t_min < sol2 and t_max > sol2:
                 distance = sol2
                 closest = sphere
@@ -62,9 +65,7 @@ def trace_ray(source, direction, depth):
     if depth == 0:
         return [0, 0, 0]
 
-    intersection = get_closest_intersection(source, direction, 0.01, 100000)
-    sphere = intersection[0]
-    distance = intersection[1]
+    sphere, distance = get_closest_intersection(source, direction, 0.01, 100000)
     if sphere:
         refl = sphere_reflectiveness(sphere)
         surface = vector_add(vector_scale(direction, distance), source)
@@ -99,6 +100,7 @@ def render_with_turtle():
             turtle.forward(pen_size)
     wait()
 
+
 def render_image(filename="output.png"):
     data = []
     for y in range(-canvas_half, canvas_half, pen_size):
@@ -114,4 +116,4 @@ def render_image(filename="output.png"):
     turtle.bgpic(filename)
     wait()
 
-render_image();
+render_image()

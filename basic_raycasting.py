@@ -5,50 +5,55 @@ from math import sqrt
 from world import *
 from things import *
 
+
 def get_closest_sphere(source, direction, t_min, t_max):
-    closest = None;
+    closest = None
     distance = t_max + 1
     for sphere in spheres:
-        radius = sphere[0]
-        pos = sphere[1]
+        radius = sphere_radius(sphere)
+        pos = sphere_center(sphere)
         v = vector_sub(source, pos)
-        a = 2 * dot_product(direction, direction)
-        b = -2 * dot_product(v, direction)
-        discr = b*b - 2 * a * (dot_product(v, v) - radius * radius)
+        b = - dot_product(v, direction)
+        discr = b*b - (dot_product(v, v) - radius * radius)
         if discr > 0:
-            sol1 = (b - discr) / a
+            discr = sqrt(discr)
+            sol1 = b - discr
             if sol1 < distance and t_min < sol1 and t_max > sol1:
                 distance = sol1
                 closest = sphere
-            sol2 = (b + discr) / a
+            sol2 = b + discr
             if sol2 < distance and t_min < sol2 and t_max > sol2:
                 distance = sol2
                 closest = sphere
     return closest, distance
 
-def trace_ray(direction):
-    s,d = get_closest_sphere(camera, direction, 0, 100000)
-    if not s:
-        return (0, 0, 0)
-    x = a_minus_bk(camera, direction, -d)
-    n = list(map(abs,vector_sub(x, s[1])))
+
+def trace_ray(source, direction):
+    sphere, distance = get_closest_sphere(camera, direction, 0.001, 100000)
+    if not sphere:
+        return [0, 0, 0]
+    x = a_minus_bk(source, direction, distance)
+    n = list(map(abs, vector_sub(x, sphere_center(sphere))))
     m = max(n)
-    return tuple(map(lambda x: x/m, n))
+    return list(map(lambda x: x/m, n))
 
 ################################################################################
 
 def render_with_turtle():
     turtle.pensize(pen_size)
     turtle.speed(0)
+    turtle.shape("turtle")
+
     for y in range(-canvas_half, canvas_half, pen_size):
         turtle.penup()
         turtle.setpos(-canvas_half, y)
         turtle.pendown()
         for x in range(-canvas_half, canvas_half, pen_size):
-            color = trace_ray([x/canvas_size, y/canvas_size, -1])
+            color = trace_ray(camera, vector_normalize([x/canvas_size, y/canvas_size, -1]))
             turtle.pencolor(color)
             turtle.forward(pen_size)
     wait()
+
 
 def render_image(filename="output.png"):
     data = []
@@ -65,5 +70,5 @@ def render_image(filename="output.png"):
     turtle.bgpic(filename)
     wait()
 
-#render_with_turtle()
+# render_with_turtle()
 render_image()
