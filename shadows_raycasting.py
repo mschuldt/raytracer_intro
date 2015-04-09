@@ -69,7 +69,3 @@ def trace_ray(source, direction):
         illum = get_illumination(sphere, distance, direction, normal)
         return vector_scale(sphere_color(sphere), illum)
     return [0, 0, 0]
-    
-def pixel_color(x, y):
-    direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
-    return trace_ray(camera, direction)

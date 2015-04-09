@@ -21,7 +21,6 @@ elif argv[1] == "raytracer":
 else:
     usage_and_exit()
 
-
 def render_with_turtle():
     turtle.pensize(pen_size)
     turtle.speed(0)
@@ -49,6 +48,10 @@ def render_image(filename="output.png"):
     img.save(filename)
     turtle.bgpic(filename)
     wait()
+
+def pixel_color(x, y):
+    direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
+    return trace_ray(camera, direction)
 
 if render_using_turtle:
     render_with_turtle()

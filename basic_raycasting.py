@@ -33,7 +33,3 @@ def trace_ray(source, direction):
     if not sphere:
         return [0, 0, 0]
     return [1, 1, 1]
-
-def pixel_color(x, y):
-    direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
-    return trace_ray(camera, direction)

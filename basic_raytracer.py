@@ -61,7 +61,7 @@ def get_closest_intersection(source, direction, t_min, t_max):
     return closest, distance
 
 
-def trace_ray(source, direction, depth):
+def trace_ray(source, direction, depth=reflection_depth):
     if depth == 0:
         return [0, 0, 0]
 
@@ -81,8 +81,3 @@ def trace_ray(source, direction, depth):
 
         return vector_add(curr_color, reflection)
     return [0, 0, 0]
-
-
-def pixel_color(x, y):    
-    direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
-    return trace_ray(camera, direction, reflection_depth)
