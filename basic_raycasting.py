@@ -35,35 +35,6 @@ def trace_ray(direction):
     m = max(n)
     return tuple(map(lambda x: x/m, n))
 
-################################################################################
-
-def render_with_turtle():
-    turtle.pensize(pen_size)
-    turtle.speed(0)
-    for y in range(-canvas_half, canvas_half, pen_size):
-        turtle.penup()
-        turtle.setpos(-canvas_half, y)
-        turtle.pendown()
-        for x in range(-canvas_half, canvas_half, pen_size):
-            color = trace_ray([x/canvas_size, y/canvas_size, -1])
-            turtle.pencolor(color)
-            turtle.forward(pen_size)
-    wait()
-
-def render_image(filename="output.png"):
-    data = []
-    for y in range(-canvas_half, canvas_half, pen_size):
-        row = []
-        for x in range(-canvas_half, canvas_half, pen_size):
-            direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
-            color = list(map(lambda c: min(1.0, c), trace_ray(direction)))
-            row.extend(map(lambda x: int(x*255), color*pen_size))
-        data.extend([row for _ in range(pen_size)])
-        print ("{}%".format(((y + canvas_half)/canvas_size)*100))
-    img = png.from_array(list(reversed(data)), 'RGB')
-    img.save(filename)
-    turtle.bgpic(filename)
-    wait()
-
-#render_with_turtle()
-render_image()
+def pixel_color(x, y):
+    direction = vector_normalize([x/canvas_size, y/canvas_size, -1])
+    return trace_ray(direction)
