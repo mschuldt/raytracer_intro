@@ -6,7 +6,7 @@ from world import *
 from things import *
 
 def calc_reflected(v, n):
-    """ -v + 2 * dot(n, v) * n """
+    """ v - 2 * dot(n, v) * n """
     dot_times_two = 2 * dot_product(v, n)
     return vector_sub(v, vector_scale(n, dot_times_two))
 
@@ -19,9 +19,7 @@ def calc_diffuse(l, normal):
     return max(0.0, dot_product(l, normal))
 
 
-def get_illumination(sphere, distance, v):
-    surface = vector_add(vector_scale(v, distance), camera)
-    normal = vector_normalize(vector_sub(surface, sphere_center(sphere)))
+def get_illumination(sphere, surface, v, normal):
     p = sphere_exponent(sphere)
     coefficient = ambient_light
     for light in lights:
@@ -57,7 +55,7 @@ def trace_ray(source, direction):
         surface = vector_add(vector_scale(direction, distance), source)
         normal = vector_normalize(vector_sub(surface, sphere_center(sphere)))
 
-        illum = get_illumination(sphere, distance, direction)
+        illum = get_illumination(sphere, surface, direction, normal)
         return vector_scale(sphere_color(sphere), illum)
     return [0, 0, 0]
 

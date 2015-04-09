@@ -16,7 +16,7 @@ elif argv[1] == "shadows":
     from shadows_raycasting import *
 elif argv[1] == "illum":
     from illuminated_raycasting import *
-elif argv[1] == "":
+elif argv[1] == "raytracer":
     from basic_raytracer import *
 else:
     usage_and_exit()

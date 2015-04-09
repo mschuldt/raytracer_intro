@@ -2,13 +2,13 @@ from math import sqrt
 
 ################################################################################
 # vectors
-# 
+#
 
 def vector(x, y, z):
     return (x, y, z)
 def pos(x, y, z):
     return vector(x, y, z)
-    
+
 def vector_add(a, b):
     return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]
 
@@ -20,7 +20,7 @@ def dot_product(a, b):
 
 def vector_scale(v, s):
     return list(map(lambda x: x * s, v))
-    
+
 def a_minus_bk(a, b, k):
     return [a[0] - b[0]*k, a[1] - b[1]*k, a[2] - b[2]*k]
 
@@ -28,7 +28,7 @@ def vector_normalize(v):
     magnitude = sqrt(dot_product(v, v))
     return list(map(lambda x: x / magnitude, v))
 
-    
+
 ################################################################################
 # spheres
 #
@@ -52,7 +52,7 @@ def sphere_reflectiveness(s):
 
 ################################################################################
 # lights
-# 
+#
 def light(intensity, coord):
     return (intensity, coord)
 
@@ -80,4 +80,4 @@ def wait():
 
 def show_return(a):
     print(a)
-    return a    
+    return a
