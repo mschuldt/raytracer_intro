@@ -1,0 +1,3 @@
+[submodule "pypng"]
+	path = pypng
+	url = https://github.com/drj11/pypng.git

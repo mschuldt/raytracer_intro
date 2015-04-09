@@ -1,3 +1,4 @@
+from __future__ import division #for python 2
 import turtle
 from math import sqrt
 
@@ -123,20 +124,36 @@ def trace_ray(direction):
     return (0, 0, 0)
 
 
-turtle.pensize(pen_size)
-turtle.speed(0)
-turtle.shape("turtle")
+def render_image(filename="output.png"):
+    import png
+    data = []
+    for y in range(-canvas_half, canvas_half, pen_size):
+        row = []
+        for x in range(-canvas_half, canvas_half, pen_size):
+            v = vector_normalize([x/canvas_size, y/canvas_size, -1])
+            color = trace_ray(v)
+            row.extend(list(map(lambda x: int(x*255), color*pen_size)))
+        data.extend([row for _ in range(pen_size)])
+        print ("{}%".format(((y + canvas_half)/canvas_size)*100))
+    img = png.from_array(list(reversed(data)), 'RGB')
+    img.save(filename)
+    turtle.bgpic(filename)
 
-for y in range(-canvas_half, canvas_half, pen_size):
-    turtle.penup()
-    turtle.setpos(-canvas_half, y)
-    turtle.pendown()
-    for x in range(-canvas_half, canvas_half, pen_size):
-        v = vector_normalize([x/canvas_size, y/canvas_size, -1])
-        color = trace_ray(v)
-        turtle.pencolor(color)
-        turtle.forward(pen_size)
+def render_with_turtle():
+    turtle.pensize(pen_size)
+    turtle.speed(0)
+    turtle.shape("turtle")
+    for y in range(-canvas_half, canvas_half, pen_size):
+        turtle.penup()
+        turtle.setpos(-canvas_half, y)
+        turtle.pendown()
+        for x in range(-canvas_half, canvas_half, pen_size):
+            v = vector_normalize([x/canvas_size, y/canvas_size, -1])
+            color = trace_ray(v)
+            turtle.pencolor(color)
+            turtle.forward(pen_size)
 
+render_image()
 
 ### debugging
 
@@ -145,4 +162,4 @@ def show_return(a):
     return a
 
 #wait
-x = input()
+raw_input()
