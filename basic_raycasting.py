@@ -32,4 +32,4 @@ def trace_ray(source, direction):
     sphere, distance = get_closest_sphere(camera, direction, 0.001, 100000)
     if not sphere:
         return [0, 0, 0]
-    return [1, 1, 1]
+    return sphere_color(sphere)
