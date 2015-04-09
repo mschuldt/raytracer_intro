@@ -1,9 +1,9 @@
 from __future__ import division #for python 2
 import turtle
 
-#from basic_raycasting import *
+from basic_raycasting import *
 #from shadows_raycasting import *
-from illuminated_raycasting import *
+#from illuminated_raycasting import *
 #from basic_raytracer import *
 
 
@@ -27,7 +27,7 @@ def render_image(filename="output.png"):
     for y in range(-canvas_half, canvas_half, pen_size):
         row = []
         for x in range(-canvas_half, canvas_half, pen_size):
-            row.extend(list(map(lambda x: int(x*255), pixel_color(x,y)*pen_size)))
+            row.extend(list(map(lambda x: int(x*255) if x <= 1 else 255, pixel_color(x,y)*pen_size)))
         data.extend([row for _ in range(pen_size)])
         print ("{}%".format(((y + canvas_half)/canvas_size)*100))
     img = png.from_array(list(reversed(data)), 'RGB')
