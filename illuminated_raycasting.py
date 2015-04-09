@@ -1,9 +1,6 @@
 import turtle
 from math import sqrt
 
-turtle.speed(0)
-turtle.shape("turtle")
-
 canvas_size = 200
 canvas_half = int(canvas_size/2)
 pen_size = 5
@@ -13,7 +10,7 @@ spheres = [[1, [0, 1,  0], [1, 0, 0], 16, 2],
            [1, [1, -1, 0], [0, 1, 0], 16, 2],
            [1, [-1, -1, 0], [0, 0, 1], 16, 2]]
 
-lights = [(1, [0.5, 0.5, -5])]
+lights = [(0.8, [0.5, 0.5, 5])]
 
 ambient_light = 0.1
 
@@ -40,25 +37,15 @@ def sphere_exponent(s):
 def sphere_reflectiveness(s):
     return s[4]
 
-
-
-def calc_specular(l, v, normal, p):
-    reflected = calc_reflected(l, normal)
-    return pow(max(0.0, dot_product(reflected, v)), p)
-
-def calc_diffuse(l, normal):
-    return max(0.0, dot_product(l, normal))
-
-
 def calc_reflected(v, n):
     """ -v + 2 * dot(n, v) * n """
     dot_times_two = 2 * dot_product(v, n)
-    return vector_sub(vector_scale(n, dot_times_two), v)
+    return vector_sub(v, vector_scale(n, dot_times_two))
 
 def dot_product(a, b):
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
 
-def vecotr_add(a, b):
+def vector_add(a, b):
     return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]
 
 def vector_sub(a, b):
@@ -71,9 +58,19 @@ def vector_normalize(v):
     magnitude = sqrt(dot_product(v, v))
     return list(map(lambda x: x / magnitude, v))
 
+#### ACTUAL LOGIC ####
+
+def calc_specular(l, v, normal, p):
+    reflected = calc_reflected(l, normal)
+    return pow(max(0.0, dot_product(reflected, v)), p)
+
+
+def calc_diffuse(l, normal):
+    return max(0.0, dot_product(l, normal))
+
 
 def get_illumination(sphere, distance, v):
-    surface = vector_scale(v, distance)
+    surface = vector_add(vector_scale(v, distance), camera)
     normal = vector_normalize(vector_sub(surface, sphere_center(sphere)))
     p = sphere_exponent(sphere)
 
@@ -94,14 +91,15 @@ def get_closest_intersection(source, direction, t_min, t_max):
         pos = sphere_center(sphere)
         v = vector_sub(source, pos)
         a = 2 * dot_product(direction, direction)
-        b = -2 * dot_product(v, direction)
-        discr = b*b - 2 * a * (dot_product(v, v) - radius * radius)
+        b = - dot_product(v, direction)
+        discr = b*b - (dot_product(v, v) - radius * radius)
         if discr > 0:
-            sol1 = (b - discr) / a
+            discr = sqrt(discr)
+            sol1 = (b + discr)
             if sol1 < distance and t_min < sol1 and t_max > sol1:
                 distance = sol1
                 closest = sphere
-            sol2 = (b + discr) / a
+            sol2 = (b - discr)
             if sol2 < distance and t_min < sol2 and t_max > sol2:
                 distance = sol2
                 closest = sphere
@@ -117,8 +115,10 @@ def trace_ray(direction):
         return tuple(map(lambda channel: min(1.0, channel * illum), color))
     return (0, 0, 0)
 
+
 turtle.pensize(pen_size)
 turtle.speed(0)
+turtle.shape("turtle")
 
 for y in range(-canvas_half, canvas_half, pen_size):
     turtle.penup()
